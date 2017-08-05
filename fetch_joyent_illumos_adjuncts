@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+ILLUMOS_ADJUNCT_TARBALL_URL="https://download.joyent.com/pub/build/adjuncts/"
+
+function fetch_adjuncts
+{
+	local tgz
+	[[ -z "$ILLUMOS_ADJUNCT_TARBALL_URL" ]] && fatal \
+	    "ILLUMOS_ADJUNCT_TARBALL_URL missing from configure"
+	tgz=$(curl -k "$ILLUMOS_ADJUNCT_TARBALL_URL" | grep href | tail -n1 | \
+	    cut -d '"' -f2)
+	[[ -z "$tgz" ]] && fatal \
+	    "Unable to get adjuncts from ILLUMOS_ADJUNCT_TARBALL_URL"
+	curl -kO $ILLUMOS_ADJUNCT_TARBALL_URL/$tgz
+	[[ $? -eq 0 ]] || fatal "failed to fetch adjuncts tarball"
+}
+echo "Fetching adjuncts tgz... \c "
+fetch_adjuncts
